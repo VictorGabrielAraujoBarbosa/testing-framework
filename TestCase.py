@@ -1,14 +1,22 @@
+import TestResult as tr
+
 # Classe TestCase
 class TestCase:
 
     def __init__(self, test_method_name):
         self.test_method_name = test_method_name
 
-    def run(self):
-        self.set_up()    # chama método de setup
-        test_method = getattr(self, self.test_method_name)
-        test_method()    # chama método de teste 
-        self.tear_down() # chama método de teardown 
+    def run(self, result):
+        result.test_started()
+        self.set_up()
+        try:
+            test_method = getattr(self, self.test_method_name)
+            test_method()
+        except AssertionError as e:
+            result.add_failure(self.test_method_name)
+        except Exception as e:
+            result.add_error(self.test_method_name)
+        self.tear_down()
 
     def set_up(self):
         pass
@@ -37,11 +45,16 @@ class MyTest(TestCase):
         print('test_c')
 
 # Executando o teste exemplo
+
+result = tr.TestResult()
+
 test = MyTest('test_a')
-test.run()
+test.run(result)
 
 test = MyTest('test_b')
-test.run()
+test.run(result)
 
 test = MyTest('test_c')
-test.run()
+test.run(result)
+
+print(result.summary())
