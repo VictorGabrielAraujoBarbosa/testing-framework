@@ -1,39 +1,6 @@
 from TestCase import TestCase
 from TestResult import TestResult
-
-# classes mockadas para representar um teste real
-class TestStub(TestCase):
-
-    def test_success(self):
-        assert True
-
-    def test_failure(self):
-        assert False
-
-    def test_error(self):
-        raise Exception
-    
-class TestSpy(TestCase):
-
-    def __init__(self, name):
-        TestCase.__init__(self, name)
-        self.was_run = False
-        self.was_set_up = False
-        self.was_tear_down = False
-        self.log = ""
-
-    def set_up(self):
-        self.was_set_up = True
-        self.log += "set_up "
-
-    def test_method(self):
-        self.was_run = True
-        self.log += "test_method "
-
-    def tear_down(self):
-        self.was_tear_down = True
-        self.log += "tear_down"
-    
+from MockTestClasses import TestSpy, TestStub
 
 # teste da classe TestCase
 class TestCaseTest(TestCase):
@@ -84,33 +51,3 @@ class TestCaseTest(TestCase):
         spy = TestSpy('test_method')
         spy.run(self.result)
         assert spy.log == "set_up test_method tear_down"
-
-
-#============================== executando os testes =============================
-result = TestResult()
-
-test = TestCaseTest('test_result_success_run')
-test.run(result)
-
-test = TestCaseTest('test_result_failure_run')
-test.run(result)
-
-test = TestCaseTest('test_result_error_run')
-test.run(result)
-
-test = TestCaseTest('test_result_multiple_run')
-test.run(result)
-
-test = TestCaseTest('test_was_set_up')
-test.run(result)
-
-test = TestCaseTest('test_was_run')
-test.run(result)
-
-test = TestCaseTest('test_was_tear_down')
-test.run(result)
-
-test = TestCaseTest('test_template_method')
-test.run(result)
-
-print(result.summary())
